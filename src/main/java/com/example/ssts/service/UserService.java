@@ -2,13 +2,14 @@ package com.example.ssts.service;
 
 import com.example.ssts.model.User;
 import com.example.ssts.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -18,18 +19,24 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
+    }
+
     public void registerUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-    }
-
-    public boolean loginUser(User user) {
-        Optional<User> dbUser = userRepository.findByUsername(user.getUsername());
-        return dbUser.isPresent() && 
-               passwordEncoder.matches(user.getPassword(), dbUser.get().getPassword());
     }
 
     public User getUserById(Long id) {
@@ -41,12 +48,10 @@ public class UserService {
         User user = getUserById(id);
         user.setUsername(userDetails.getUsername());
         
-        // Only update password if it's not empty/null
         if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         }
         
-        // Update other fields as needed
         return userRepository.save(user);
     }
 }

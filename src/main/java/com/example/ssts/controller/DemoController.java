@@ -1,7 +1,4 @@
 package com.example.ssts.controller;
-
-
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,4 +20,3 @@ public class DemoController {
         return "redirect:/api/hello";
     }
 }
-
