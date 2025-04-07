@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/base :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Courses</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container course-container">
+            <h1 class="section-title">Courses</h1>
+
+            <div th:if="${isAdmin}">
+                <h3 class="form-title">Add New Course</h3>
+                <form method="POST" th:action="@{/courses/save}" class="form">
+                    <label for="title">Course Title</label>
+                    <input type="text" id="title" name="title" required><br>
+
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required></textarea><br>
+
+                    <label for="courseUrl">Course URL</label>
+                    <input type="url" id="courseUrl" name="courseUrl" required><br>
+
+                    <button type="submit" class="btn submit-btn">Add Course</button>
+                </form>
+            </div>
+
+            <h3 class="section-subtitle">Available Courses</h3>
+            <ul class="course-list">
+                <li th:each="course : ${courses}" class="course-item">
+                    <h3 class="course-title" th:text="${course.title}"></h3>
+                    <p class="course-desc" th:text="${course.description}"></p>
+                    <a th:href="${course.courseUrl}" target="_blank" class="course-link">Course Link</a>
+                    
+                    <div th:unless="${isAdmin}">
+                        <form method="POST" th:action="@{'/courses/subscribe/' + ${course.id}}" style="display:inline;">
+                            <button type="submit" class="btn event-btn">
+                                Join Now
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:if="${isAdmin}">
+                        <a th:href="@{'/courses/edit/' + ${course.id}}" class="btn btn-primary">Edit</a>
+                        <a th:href="@{'/courses/delete/' + ${course.id}}" class="btn btn-danger">Delete</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
