@@ -2,6 +2,9 @@ package com.example.ssts.service;
 
 import com.example.ssts.model.User;
 import com.example.ssts.repository.UserRepository;
+
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,5 +56,31 @@ public class UserService implements UserDetailsService {
         }
         
         return userRepository.save(user);
+    }
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    public void promoteToAdmin(Long userId) {
+        User user = getUserById(userId);
+        user.setRole(User.ROLE_ADMIN);
+        userRepository.save(user);
+    }
+    
+    public User createAdminUser(String username, String password) {
+        if (userRepository.existsByUsername(username)) {
+            throw new RuntimeException("Username already exists");
+        }
+        
+        User admin = new User();
+        admin.setUsername(username);
+        admin.setPassword(passwordEncoder.encode(password));
+        admin.setRole(User.ROLE_ADMIN);
+        
+        return userRepository.save(admin);
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

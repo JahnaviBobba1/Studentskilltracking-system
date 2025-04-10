@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "users")
 public class User {
-
+    public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_USER = "USER";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

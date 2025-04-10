@@ -2,6 +2,8 @@ package com.example.ssts.controller;
 
 import com.example.ssts.model.Event;
 import com.example.ssts.service.EventService;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ public class EventController {
         return "events";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("event", new Event());
@@ -31,6 +34,7 @@ public class EventController {
         return "event-form";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public String saveEvent(@ModelAttribute Event event) {
         eventService.createEvent(event);
