@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .requestMatchers("/courses/**", "/events/**").authenticated()
                 .requestMatchers("/courses/create", "/courses/save", "/courses/edit/**", 
                                "/courses/delete/**", "/events/create", "/events/save", 
-                               "/events/edit/**", "/events/delete/**").hasRole("ADMIN")
+                               "/events/edit/**", "/events/delete/**", "/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
