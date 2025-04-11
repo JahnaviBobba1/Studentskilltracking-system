@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-      
-      <head>
-    <title>Events</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${course.id != null} ? 'Edit Course' : 'Create Course'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -18,13 +16,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Home</a>
+                        <a class="nav-link active" th:href="@{/}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/courses/all}">Courses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/events/all}">Events</a>
+                        <a class="nav-link" th:href="@{/events/all}">Events</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/profile}">My Profile</a>
@@ -71,39 +69,25 @@
         </div>
     </nav>
     <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Upcoming Events</h2>
-            <div sec:authorize="hasRole('ADMIN')">
-                <a th:href="@{/events/create}" class="btn btn-success">
-                    <i class="bi bi-plus-circle"></i> Create New Event
-                </a>
-            </div>
-        </div>
+        <h2 th:text="${course.id != null} ? 'Edit Course' : 'Create New Course'"></h2>
         
-        <div class="row mt-4">
-            <div class="col-md-6 mb-4" th:each="event : ${events}">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${event.name}"></h5>
-                        <p class="card-text" th:text="${event.description}"></p>
-                        <p class="text-muted" th:text="${#temporals.format(event.date, 'dd MMM yyyy HH:mm')}"></p>                        
-                        <div class="d-flex justify-content-between">
-                            <a th:href="@{'/events/' + ${event.id}}" class="btn btn-primary">View Details</a>
-                            
-                            <div sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/events/edit/{id}(id=${event.id})}" 
-                                   class="btn btn-sm btn-warning">Edit</a>
-                                <a th:href="@{/events/delete/{id}(id=${event.id})}" 
-                                   class="btn btn-sm btn-danger ml-2"
-                                   onclick="return confirm('Are you sure you want to delete this event?')">
-                                    Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <form th:action="${course.id != null} ? @{/courses/save} : @{/courses/save}" 
+              method="post" th:object="${course}">
+            <input type="hidden" th:field="*{id}"/>
+            
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" th:field="*{title}" required>
             </div>
-        </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" th:field="*{description}" rows="3" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a th:href="@{/courses/all}" class="btn btn-secondary">Cancel</a>
+        </form>
     </div>
 </body>
 </html>

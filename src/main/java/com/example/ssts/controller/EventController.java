@@ -26,7 +26,7 @@ public class EventController {
         return "events";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("event", new Event());
@@ -34,9 +34,10 @@ public class EventController {
         return "event-form";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/save")
     public String saveEvent(@ModelAttribute Event event) {
+        
         eventService.createEvent(event);
         return "redirect:/events/all";
     }

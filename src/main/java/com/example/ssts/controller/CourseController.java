@@ -24,14 +24,14 @@ public class CourseController {
         return "courses";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("course", new Course());
         return "course-form";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/save")
     public String saveCourse(@ModelAttribute Course course) {
         courseService.createCourse(course);

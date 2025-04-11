@@ -189,8 +189,11 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
                     <div class="card event-card h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="badge bg-primary" th:text="${#dates.format(event.date, 'EEE, MMM d')}"></span>
-                                <span class="text-muted" th:text="${#dates.format(event.date, 'h:mm a')}"></span>
+                                <!-- Using #temporals (recommended) -->
+                                <span class="badge bg-primary" 
+                                th:text="${#temporals.format(event.date, 'EEE, MMM d')}"></span>
+                                <span class="text-muted" 
+                                th:text="${#temporals.format(event.date, 'h:mm a')}"></span>
                             </div>
                             <h5 class="card-title" th:text="${event.name}"></h5>
                             <p class="card-text text-muted" th:text="${event.description}"></p>
