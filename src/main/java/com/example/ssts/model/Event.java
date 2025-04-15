@@ -26,7 +26,7 @@ public class Event {
     @Future(message = "Event date must be in the future")
     private LocalDateTime date;
 
-    @Column(nullable = true, length = 200)
+    @Column(nullable = false)
     private String location;
 
     @Column(nullable = true)
@@ -45,7 +45,8 @@ public class Event {
     // Constructors
     public Event() {}
 
-    public Event(String name, String description, LocalDateTime date, String location) {
+    public Event(Long id, String name, String description, LocalDateTime date, String location) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.date = date;

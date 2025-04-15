@@ -16,10 +16,11 @@ public class Course {
     @Column(nullable = false)
     private String description;
 
-    // Constructors, Getters, Setters
     public Course() {}
 
-    public Course(String title, String description) {
+    // Constructors, Getters, Setters
+    public Course(Long id, String title, String description) {
+        this.id = id;
         this.title = title;
         this.description = description;
     }
