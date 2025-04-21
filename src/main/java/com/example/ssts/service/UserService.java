@@ -38,6 +38,11 @@ public class UserService implements UserDetailsService {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
+        if (user.getRole() == null) {
+            user.setRole(User.ROLE_USER); // Default role
+        } else {
+            user.setRole(user.getRole()); // This will apply the formatting from setRole()
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }

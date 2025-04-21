@@ -18,7 +18,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String role = "user";
+    private String role = "ROLE_USER";
 
     // Constructors, getters, and setters
     public User() {}
