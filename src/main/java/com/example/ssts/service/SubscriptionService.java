@@ -76,4 +76,18 @@ public class SubscriptionService {
                 .filter(sub -> sub.getEvent() != null)
                 .collect(Collectors.toList());
     }
+
+    public List<User> findUsersSubscribedToEvent(Long eventId) {
+        return subscriptionRepository.findByEventId(eventId)
+                .stream()
+                .map(Subscription::getUser)
+                .collect(Collectors.toList());
+    }
+    
+    public List<User> findUsersSubscribedToCourse(Long courseId) {
+        return subscriptionRepository.findByCourseId(courseId)
+                .stream()
+                .map(Subscription::getUser)
+                .collect(Collectors.toList());
+    }
 }

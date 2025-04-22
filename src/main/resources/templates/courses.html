@@ -106,6 +106,16 @@
                                 </a>
                             </div>
                         </div>
+                        <div sec:authorize="hasRole('ROLE_ADMIN')" th:if="${courseSubscribers != null}">
+                            <h6>Subscribers:</h6>
+                            <ul th:if="${not #maps.isEmpty(courseSubscribers) and not #lists.isEmpty(courseSubscribers.get(course.id))}">
+                                <li th:each="user : ${courseSubscribers.get(course.id)}" 
+                                    th:text="${user.username}"></li>
+                            </ul>
+                            <p th:if="${#maps.isEmpty(courseSubscribers) or #lists.isEmpty(courseSubscribers.get(course.id))}">
+                                No subscribers yet
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

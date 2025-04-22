@@ -6,6 +6,8 @@ import com.example.ssts.model.User;
 import com.example.ssts.service.EventService;
 import com.example.ssts.service.SubscriptionService;
 import com.example.ssts.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/events")
@@ -22,6 +27,22 @@ public class EventController {
     private final EventService eventService;
     private final UserService userService;
     private final SubscriptionService subscriptionService;
+
+    @Autowired
+    public EventController(EventService eventService,
+                        SubscriptionService subscriptionService,
+                        UserService userService) {
+        this.eventService = eventService;
+        this.subscriptionService = subscriptionService;
+        this.userService = userService;
+    }
+
+
+    private boolean isAdmin(Principal principal) {
+        if (principal == null) return false;
+        User user = userService.getUserByUsername(principal.getName());
+        return user.getRole().equals(User.ROLE_ADMIN);
+    }
 
     // Constructor injection (no @Autowired needed for single constructor)
     public EventController(EventService eventService, 
@@ -33,10 +54,22 @@ public class EventController {
     }
 
     @GetMapping("/all")
-    public String getAllEvents(Model model) {
-        model.addAttribute("events", eventService.getAllEvents());
-        return "events";
+    public String getAllEvents(Model model, Principal principal) {
+    List<Event> events = eventService.getAllEvents();
+    model.addAttribute("events", events);
+    
+    // Check if admin to show subscriber info
+    if (isAdmin(principal)) {
+        Map<Long, List<User>> eventSubscribers = new HashMap<>();
+        for (Event event : events) {
+            List<User> subscribers = subscriptionService.findUsersSubscribedToEvent(event.getId());
+            eventSubscribers.put(event.getId(), subscribers);
+        }
+        model.addAttribute("eventSubscribers", eventSubscribers);
     }
+    
+    return "events";
+}
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/create")

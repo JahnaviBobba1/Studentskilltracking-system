@@ -7,6 +7,9 @@ import com.example.ssts.service.SubscriptionService;
 import com.example.ssts.service.UserService;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -28,9 +31,26 @@ public class CourseController {
         this.subscriptionService = subscriptionService;
     }
 
+    private boolean isAdmin(Principal principal) {
+        if (principal == null) return false;
+        User user = userService.getUserByUsername(principal.getName());
+        return user.getRole().equals(User.ROLE_ADMIN);
+    }
+
     @GetMapping("/all")
-    public String getAllCourses(Model model) {
-        model.addAttribute("courses", courseService.getAllCourses());
+    public String getAllCourses(Model model, Principal principal) {
+        List<Course> courses = courseService.getAllCourses();
+        model.addAttribute("courses", courses);
+        
+        if (isAdmin(principal)) {
+            Map<Long, List<User>> courseSubscribers = new HashMap<>();
+            for (Course course : courses) {
+                List<User> subscribers = subscriptionService.findUsersSubscribedToCourse(course.getId());
+                courseSubscribers.put(course.getId(), subscribers);
+            }
+            model.addAttribute("courseSubscribers", courseSubscribers);
+        }
+        
         return "courses";
     }
 
